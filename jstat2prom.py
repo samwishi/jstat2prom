@@ -94,7 +94,7 @@ def get_metrics(data):
     }
 
     # Add support for concurrent gc metrics available when using g1gc
-    if len(data) >= 17:
+    if len(data) >= 18:
         metrics['jvm_gc_collectors_concurrent_collection_count'] = data[16]
         metrics['jvm_gc_collectors_concurrent_collection_time_seconds'] = data[17]
 
