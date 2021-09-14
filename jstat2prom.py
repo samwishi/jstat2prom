@@ -14,7 +14,6 @@ jstat2prom
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
-
 """
 
 import subprocess
@@ -44,7 +43,6 @@ METRIC_PREFIX = "jstat"
 # jvm_gc_collectors_concurrent_collection_count counter
 # jvm_gc_collectors_concurrent_collection_time_seconds gauge
 
-
 def get_pid():
     try:
         return subprocess.check_output(
@@ -52,7 +50,6 @@ def get_pid():
             stderr=subprocess.STDOUT).decode('ascii').rstrip()
     except subprocess.CalledProcessError:
         return None
-
 
 def write_to_prom(metrics):
     data = ""
@@ -70,7 +67,6 @@ def write_to_prom(metrics):
     file.write(data)
     file.close()
     shutil.move(PROM_DIR + '/jstat.tmp', PROM_DIR + '/jstat.prom')
-
 
 def get_metrics(data):
     # https://stackoverflow.com/questions/1262328/how-is-the-java-memory-pool-divided
@@ -108,13 +104,12 @@ def get_metrics(data):
             metrics[k] = v * 1024
     return metrics
 
-
 def read_from_jstat():
     command = ['jstat', '-gc']
     pid = get_pid()
     command.extend((pid, INTERVAL, COUNT))
     if pid:
-        print "Running jstat against jvm pid {}. Interval: {}".format(
+        print "Running jstat against JVM PID {}. Interval: {}".format(
             pid, INTERVAL)
         try:
             p = subprocess.Popen(
@@ -130,7 +125,7 @@ def read_from_jstat():
                     write_to_prom(metrics)
                 retcode = p.poll()
                 if retcode is not None:
-                    print "jstat died. Exiting."
+                    print "jstat died. Sleeping..."
                     time.sleep(SLEEP_TIME)
                     break
         except EnvironmentError as e:
@@ -138,10 +133,9 @@ def read_from_jstat():
             time.sleep(SLEEP_TIME)
             return
     else:
-        print "Can't get jvm pid. Sleeping for {} seconds.".format(
+        print "Can't get JVM PID. Sleeping for {} seconds...".format(
             str(SLEEP_TIME))
         time.sleep(SLEEP_TIME)
-
 
 if __name__ == '__main__':
     while True:
